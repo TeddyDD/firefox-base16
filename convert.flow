@@ -1,0 +1,231 @@
+[
+    {
+        "id": "8a3d72cb.9c8d68",
+        "type": "tab",
+        "label": "Firefox Color",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "b9f67f88.2853a8",
+        "type": "function-npm",
+        "z": "8a3d72cb.9c8d68",
+        "name": "json-from-url",
+        "func": "var codec = require('json-url')('lzma');\ncodec.decompress(msg.payload.url).then(\n    json => { \n        msg.payload = json;\n        node.send(msg);\n})",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 499.5,
+        "y": 124,
+        "wires": [
+            [
+                "493d8a65.dde9cc"
+            ]
+        ]
+    },
+    {
+        "id": "410899c8.273948",
+        "type": "http in",
+        "z": "8a3d72cb.9c8d68",
+        "name": "ffcolor",
+        "url": "/ffcolor",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 142.5,
+        "y": 127,
+        "wires": [
+            [
+                "da61405a.91c6"
+            ]
+        ]
+    },
+    {
+        "id": "493d8a65.dde9cc",
+        "type": "http response",
+        "z": "8a3d72cb.9c8d68",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 678.5,
+        "y": 127,
+        "wires": []
+    },
+    {
+        "id": "da61405a.91c6",
+        "type": "switch",
+        "z": "8a3d72cb.9c8d68",
+        "name": "ensure url",
+        "property": "payload.url",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "istype",
+                "v": "string",
+                "vt": "string"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 318.5,
+        "y": 127,
+        "wires": [
+            [
+                "b9f67f88.2853a8"
+            ],
+            [
+                "9f50aa74.d0da88"
+            ]
+        ]
+    },
+    {
+        "id": "9f50aa74.d0da88",
+        "type": "http response",
+        "z": "8a3d72cb.9c8d68",
+        "name": "fuck off",
+        "statusCode": "422",
+        "headers": {},
+        "x": 498.5,
+        "y": 184,
+        "wires": []
+    },
+    {
+        "id": "d88a1448.69f79",
+        "type": "template",
+        "z": "8a3d72cb.9c8d68",
+        "name": "Template",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n  \"colors\": {\n    \"toolbar\": {\n      \"r\": {{payload.base00-rgb-r}},\n      \"g\": {{payload.base00-rgb-g}},\n      \"b\": {{payload.base00-rgb-b}},\n      \"a\": 1\n    },\n    \"toolbar_text\": {\n      \"r\": {{payload.base05-rgb-r}},\n      \"g\": {{payload.base05-rgb-g}},\n      \"b\": {{payload.base05-rgb-b}}\n    },\n    \"accentcolor\": {\n      \"r\": {{payload.base01-rgb-r}},\n      \"g\": {{payload.base01-rgb-g}},\n      \"b\": {{payload.base01-rgb-b}}\n    },\n    \"textcolor\": {\n      \"r\": {{payload.base07-rgb-r}},\n      \"g\": {{payload.base07-rgb-g}},\n      \"b\": {{payload.base07-rgb-b}}\n    },\n    \"toolbar_field\": {\n      \"r\": {{payload.base01-rgb-r}},\n      \"g\": {{payload.base01-rgb-g}},\n      \"b\": {{payload.base01-rgb-b}},\n      \"a\": 1\n    },\n    \"toolbar_field_text\": {\n      \"r\": {{payload.base07-rgb-r}},\n      \"g\": {{payload.base07-rgb-g}},\n      \"b\": {{payload.base07-rgb-b}}\n    },\n    \"tab_line\": {\n      \"r\": {{payload.base08-rgb-r}},\n      \"g\": {{payload.base08-rgb-g}},\n      \"b\": {{payload.base08-rgb-b}}\n    }\n  },\n  \"images\": {\n    \"additional_backgrounds\": [\n      \"./bg-000.svg\"\n    ]\n  },\n  \"title\": \"foo\"\n}\n",
+        "output": "json",
+        "x": 695.5,
+        "y": 313,
+        "wires": [
+            [
+                "28e34422.c0a86c"
+            ]
+        ]
+    },
+    {
+        "id": "72605b62.2758cc",
+        "type": "yaml",
+        "z": "8a3d72cb.9c8d68",
+        "property": "payload",
+        "name": "",
+        "x": 212.5,
+        "y": 376,
+        "wires": [
+            [
+                "b96e3bc2.16e43"
+            ]
+        ]
+    },
+    {
+        "id": "57974f97.0dd81",
+        "type": "http in",
+        "z": "8a3d72cb.9c8d68",
+        "name": "",
+        "url": "/fromtheme",
+        "method": "post",
+        "upload": false,
+        "swaggerDoc": "",
+        "x": 127.5,
+        "y": 219,
+        "wires": [
+            [
+                "72605b62.2758cc"
+            ]
+        ]
+    },
+    {
+        "id": "28e34422.c0a86c",
+        "type": "function-npm",
+        "z": "8a3d72cb.9c8d68",
+        "name": "compress",
+        "func": "var codec = require('json-url')('lzma');\ncodec.compress(msg.payload).then(\n    res => { \n        let url = \"https://color.firefox.com/?theme=\"\n        msg.payload = url+res;\n        node.send(msg);\n})",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 889.5,
+        "y": 320,
+        "wires": [
+            [
+                "881e95dd.f106b"
+            ]
+        ]
+    },
+    {
+        "id": "881e95dd.f106b",
+        "type": "http response",
+        "z": "8a3d72cb.9c8d68",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 1041.5,
+        "y": 316,
+        "wires": []
+    },
+    {
+        "id": "b96e3bc2.16e43",
+        "type": "function-npm",
+        "z": "8a3d72cb.9c8d68",
+        "name": "convert",
+        "func": "var Color = require('color');\nvar colorString = require('color-string');\nfor (var k in msg.payload) {\n    if (k.startsWith(\"base\")) {\n        let c = colorString.get(\"#\"+msg.payload[k]);\n        msg.payload[k+\"-rgb-r\"] = c.value[0];\n        msg.payload[k+\"-rgb-g\"] = c.value[1];\n        msg.payload[k+\"-rgb-b\"] = c.value[2];\n    }\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 509.5,
+        "y": 300,
+        "wires": [
+            [
+                "d88a1448.69f79"
+            ]
+        ]
+    },
+    {
+        "id": "ced58bf4.a17d88",
+        "type": "http response",
+        "z": "8a3d72cb.9c8d68",
+        "name": "",
+        "statusCode": "200",
+        "headers": {},
+        "x": 658.5,
+        "y": 452,
+        "wires": []
+    },
+    {
+        "id": "77231a3c.d20904",
+        "type": "function",
+        "z": "8a3d72cb.9c8d68",
+        "name": "clean error",
+        "func": "msg.payload = \"\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 478.5,
+        "y": 432,
+        "wires": [
+            [
+                "ced58bf4.a17d88"
+            ]
+        ]
+    },
+    {
+        "id": "7d10190f.451d",
+        "type": "catch",
+        "z": "8a3d72cb.9c8d68",
+        "name": "",
+        "scope": [
+            "72605b62.2758cc"
+        ],
+        "x": 327.5,
+        "y": 447,
+        "wires": [
+            [
+                "77231a3c.d20904"
+            ]
+        ]
+    }
+]
